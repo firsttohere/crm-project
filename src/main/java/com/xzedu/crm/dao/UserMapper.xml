@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzedu.crm.dao.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.xzedu.crm.pojo.User" >
+    <id column="user_id" property="userId" jdbcType="CHAR" />
+    <result column="u_login_act" property="uLoginAct" jdbcType="VARCHAR" />
+    <result column="u_login_pwd" property="uLoginPwd" jdbcType="VARCHAR" />
+    <result column="div_name" property="divName" jdbcType="VARCHAR" />
+    <result column="u_email" property="uEmail" jdbcType="VARCHAR" />
+    <result column="u_expire_time" property="uExpireTime" jdbcType="CHAR" />
+    <result column="u_lock_state" property="uLockState" jdbcType="CHAR" />
+    <result column="u_deptno" property="uDeptno" jdbcType="CHAR" />
+    <result column="u_allow_ips" property="uAllowIps" jdbcType="VARCHAR" />
+    <result column="u_createTime" property="uCreatetime" jdbcType="CHAR" />
+    <result column="u_create_by" property="uCreateBy" jdbcType="VARCHAR" />
+    <result column="u_edit_time" property="uEditTime" jdbcType="CHAR" />
+    <result column="u_edit_by" property="uEditBy" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    user_id, u_login_act, u_login_pwd, div_name, u_email, u_expire_time, u_lock_state, 
+    u_deptno, u_allow_ips, u_createTime, u_create_by, u_edit_time, u_edit_by
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_user
+    where user_id = #{userId,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tbl_user
+    where user_id = #{userId,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xzedu.crm.pojo.User" >
+    insert into tbl_user (user_id, u_login_act, u_login_pwd, 
+      div_name, u_email, u_expire_time, 
+      u_lock_state, u_deptno, u_allow_ips, 
+      u_createTime, u_create_by, u_edit_time, 
+      u_edit_by)
+    values (#{userId,jdbcType=CHAR}, #{uLoginAct,jdbcType=VARCHAR}, #{uLoginPwd,jdbcType=VARCHAR}, 
+      #{divName,jdbcType=VARCHAR}, #{uEmail,jdbcType=VARCHAR}, #{uExpireTime,jdbcType=CHAR}, 
+      #{uLockState,jdbcType=CHAR}, #{uDeptno,jdbcType=CHAR}, #{uAllowIps,jdbcType=VARCHAR}, 
+      #{uCreatetime,jdbcType=CHAR}, #{uCreateBy,jdbcType=VARCHAR}, #{uEditTime,jdbcType=CHAR}, 
+      #{uEditBy,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xzedu.crm.pojo.User" >
+    insert into tbl_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="uLoginAct != null" >
+        u_login_act,
+      </if>
+      <if test="uLoginPwd != null" >
+        u_login_pwd,
+      </if>
+      <if test="divName != null" >
+        div_name,
+      </if>
+      <if test="uEmail != null" >
+        u_email,
+      </if>
+      <if test="uExpireTime != null" >
+        u_expire_time,
+      </if>
+      <if test="uLockState != null" >
+        u_lock_state,
+      </if>
+      <if test="uDeptno != null" >
+        u_deptno,
+      </if>
+      <if test="uAllowIps != null" >
+        u_allow_ips,
+      </if>
+      <if test="uCreatetime != null" >
+        u_createTime,
+      </if>
+      <if test="uCreateBy != null" >
+        u_create_by,
+      </if>
+      <if test="uEditTime != null" >
+        u_edit_time,
+      </if>
+      <if test="uEditBy != null" >
+        u_edit_by,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=CHAR},
+      </if>
+      <if test="uLoginAct != null" >
+        #{uLoginAct,jdbcType=VARCHAR},
+      </if>
+      <if test="uLoginPwd != null" >
+        #{uLoginPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="divName != null" >
+        #{divName,jdbcType=VARCHAR},
+      </if>
+      <if test="uEmail != null" >
+        #{uEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="uExpireTime != null" >
+        #{uExpireTime,jdbcType=CHAR},
+      </if>
+      <if test="uLockState != null" >
+        #{uLockState,jdbcType=CHAR},
+      </if>
+      <if test="uDeptno != null" >
+        #{uDeptno,jdbcType=CHAR},
+      </if>
+      <if test="uAllowIps != null" >
+        #{uAllowIps,jdbcType=VARCHAR},
+      </if>
+      <if test="uCreatetime != null" >
+        #{uCreatetime,jdbcType=CHAR},
+      </if>
+      <if test="uCreateBy != null" >
+        #{uCreateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="uEditTime != null" >
+        #{uEditTime,jdbcType=CHAR},
+      </if>
+      <if test="uEditBy != null" >
+        #{uEditBy,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xzedu.crm.pojo.User" >
+    update tbl_user
+    <set >
+      <if test="uLoginAct != null" >
+        u_login_act = #{uLoginAct,jdbcType=VARCHAR},
+      </if>
+      <if test="uLoginPwd != null" >
+        u_login_pwd = #{uLoginPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="divName != null" >
+        div_name = #{divName,jdbcType=VARCHAR},
+      </if>
+      <if test="uEmail != null" >
+        u_email = #{uEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="uExpireTime != null" >
+        u_expire_time = #{uExpireTime,jdbcType=CHAR},
+      </if>
+      <if test="uLockState != null" >
+        u_lock_state = #{uLockState,jdbcType=CHAR},
+      </if>
+      <if test="uDeptno != null" >
+        u_deptno = #{uDeptno,jdbcType=CHAR},
+      </if>
+      <if test="uAllowIps != null" >
+        u_allow_ips = #{uAllowIps,jdbcType=VARCHAR},
+      </if>
+      <if test="uCreatetime != null" >
+        u_createTime = #{uCreatetime,jdbcType=CHAR},
+      </if>
+      <if test="uCreateBy != null" >
+        u_create_by = #{uCreateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="uEditTime != null" >
+        u_edit_time = #{uEditTime,jdbcType=CHAR},
+      </if>
+      <if test="uEditBy != null" >
+        u_edit_by = #{uEditBy,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xzedu.crm.pojo.User" >
+    update tbl_user
+    set u_login_act = #{uLoginAct,jdbcType=VARCHAR},
+      u_login_pwd = #{uLoginPwd,jdbcType=VARCHAR},
+      div_name = #{divName,jdbcType=VARCHAR},
+      u_email = #{uEmail,jdbcType=VARCHAR},
+      u_expire_time = #{uExpireTime,jdbcType=CHAR},
+      u_lock_state = #{uLockState,jdbcType=CHAR},
+      u_deptno = #{uDeptno,jdbcType=CHAR},
+      u_allow_ips = #{uAllowIps,jdbcType=VARCHAR},
+      u_createTime = #{uCreatetime,jdbcType=CHAR},
+      u_create_by = #{uCreateBy,jdbcType=VARCHAR},
+      u_edit_time = #{uEditTime,jdbcType=CHAR},
+      u_edit_by = #{uEditBy,jdbcType=VARCHAR}
+    where user_id = #{userId,jdbcType=CHAR}
+  </update>
+  <select id="selectUserByLoginActAndPwd" parameterType="map" resultMap="BaseResultMap">
+  	select 
+  	<include refid="Base_Column_List"/>
+  	from tbl_user
+  	where u_login_act = #{loginAct} and u_login_pwd = #{loginPwd}
+  </select>
+</mapper>
