@@ -1,0 +1,67 @@
+搭建开发环境
+	1）创建项目：crm-pro
+	2）添加依赖：在pom文件中引入依赖jar包的gav
+	3）设置编码格式UTF-8
+	4）添加配置文件
+	5）把crm项目部署到tomcat上
+开发系统管理功能
+	1）访问首页（登录页面）
+		分析需求：当用户访问项目时，跳转到登录页面
+		分析与设计：欢迎页的url是welcome
+				设计一个JumpController，处理‘/welcome’请求，返回‘index’
+		编码实现：
+			class JumpController{
+				@RequestMapping("/welcome")
+				public String toIndex(){
+					return "index";//配置了视图解析器，会把index加上前后缀
+				}
+			}
+		测试：
+			在index.jsp中，有一行代码，document.location.href="settings/qx/user/login.html"
+			因为这个路径在WEB-INF下，所以还需要请求控制器
+			
+			我们发现页面上的图片找不到资源，推测是图片请求被springmvc拦截了
+		解决：
+			把index.jsp中的请求路径变成/crm/user/loginPage
+			写一个UserController，和login方法
+			
+			让springmvc不处理静态资源请求
+			在springmvc.xml文件中配置 默认的servlet处理器
+				<mvc:default-servlet-handler/>
+			在web.xml文件中配置这个servlet的请求映射
+				<servlet-mapping>
+					<servlet-name>default</servlet-name>
+					<url-pattern>/image/*</url-pattern>
+					<url-pattern>/jquery/*</url-pattern>
+				</servlet-mapping>
+	2）用户登录
+		用户在登录页面，输入用户名密码，点击“登录”按钮或者回车，完成用户登录功能
+			*用户名和密码不能为null
+			*用户名或者密码错误，用户已过期，用户状态被锁定，ip受限，都不能登录成功
+			*登录成功后，显示当前用户名称
+			*实现10天免登陆
+			*登录成功之后，跳转到业务主页面
+			*登录失败页面不跳转，提示信息
+		为了方便生成实体类和mapper接口，我们使用mybatis逆向工程，创建
+		在pom文件中加入插件
+			<plugins>
+				<plugin>
+					<groupId>org.mybatis.generator</groupId>
+					<artifactId>mybatis-generator-maven-plugin</artifactId>
+					<version>1.3.2</version>
+					<configuration>
+						<verbose>true</verbose>
+						<overwrite>true</overwrite>
+					</configuration>
+				</plugin>
+			</plugins>
+		刷新pom文件后，插件就下载好了
+		配置mybatis逆向工程的配置文件，插件要为我们做的事是根据数据中某一张表生成实体类，mapper接口和mapper配置文件
+		所有我们要告诉插件一下3个基本信息：
+			1.数据库连接的信息（驱动jar包所在位置，驱动类，数据库连接的url，用户名密码）
+			2.生成的实体类以及mapper接口和mapper.xml文件放在什么位置
+			3.以及数据库中哪一张表
+		配置好这些后，就可以运行插件了，步骤如下：
+			1.右击项目，run as  -> maven build... -> 
+			2.输入指令 mybatis-generator:generate, run
+			3.刷新工程
