@@ -65,3 +65,5 @@
 			1.右击项目，run as  -> maven build... -> 
 			2.输入指令 mybatis-generator:generate, run
 			3.刷新工程
+	3）把控制层（Controller）中的处理好的数据传递给视图层，使用作用域传递session
+	
