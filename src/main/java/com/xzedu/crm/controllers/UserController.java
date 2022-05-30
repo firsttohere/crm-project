@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -95,4 +96,20 @@ public class UserController {
 		}
 		return message;
 	}
+
+	@RequestMapping("/logout")
+	public String logout(HttpSession session,HttpServletResponse repsonse) {
+		//清空cookie
+		Cookie c1 = new Cookie("loginAct", "");
+		Cookie c2 = new Cookie("loginPwd", "");
+		c1.setMaxAge(0);
+		c2.setMaxAge(0);
+		repsonse.addCookie(c1);
+		repsonse.addCookie(c2);
+		//清空session
+		session.invalidate();
+		//跳转首页
+		return "redirect:/";
+	}
+
 }

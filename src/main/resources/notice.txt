@@ -55,5 +55,36 @@ CRM项目数据库表的设计
 		
 		char(10):yyyy-MM-dd
 		char(19):yyyy-MM-dd HH:mm:ss
+		
+		
+模态窗口
+	模态窗口，本质上是div，通过设置z-index大小来实现的；
+	初始时，z-index初始值是<0的，所以不显示
+	需要显示的时候，z-index设置成>0即可
+	
+	bootstrap来控制z-index的大小
+	
+	控制模态窗口的显示和隐藏
+		1）方式1：通过data-toggle="modal" data-target="#div的id值"
+		2）方式2：通过js代码
+				选择器(选中div).modal("show"|"hide");显示或者隐藏选中div对应的模态窗口
+		3）方式3：通过标签的属性data-dismiss="modal";
+				这个标签一般是在存在于一个模态窗口中的，
+				单击这个标签就会关闭当前这个模态窗口
  			
+创建市场活动
+	提交保存Ajax请求：
+		uri:"/workbench/activity/create/save"
+		将表单的数据以json格式返回给后端Controller
+		Controller调用Service层插入activity
+		Controller返回相应信息
+		前端js代码，处理相应结果
+		
+		
+		前端插件的使用步骤
+			1.引入开发包
+			2。把开发包加入到你的项目中
+			3.把开发包引入到jsp文件中
+			4.创建容器，<input type="text"> <div>两种容器是最多的
+			5.当容器加载完后，对容器调用工具函数
  			

@@ -1,5 +1,6 @@
 package com.xzedu.crm.dao;
 
+import java.util.List;
 import java.util.Map;
 
 import com.xzedu.crm.pojo.User;
@@ -18,4 +19,6 @@ public interface UserMapper {
     int updateByPrimaryKey(User record);
     
     User selectUserByLoginActAndPwd(Map<String, Object> map);
+    
+    List<User> selectAllUser();
 }

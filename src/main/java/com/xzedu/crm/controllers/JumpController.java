@@ -20,4 +20,9 @@ public class JumpController {
 	public String toMainPage() {
 		return "workbench/index";
 	}
+	@RequestMapping("/workbench/main/index")
+	public String toMainIndex() {
+		return "workbench/main/index";
+	}
+	
 }

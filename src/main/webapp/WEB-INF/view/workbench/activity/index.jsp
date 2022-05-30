@@ -1,21 +1,100 @@
-<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
 <meta charset="UTF-8">
 
-<link href="../../jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
-<link href="../../jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
+<link href="${pageContext.request.contextPath}/jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+<link href="${pageContext.request.contextPath}/jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="../../jquery/jquery-1.11.1-min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/jquery-1.11.1-min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
 <script type="text/javascript">
 
 	$(function(){
+		//cost输入框只允许，输入数字
+		checkInput = function(){
+			var keyCode = event.keyCode;
+			var nowVal = event.srcElement.value;
+			if(keyCode == 8){
+				return;
+			}
+			if(nowVal == ""){
+				if(keyCode < 49 || keyCode > 57){
+					event.returnValue = false;
+				}
+			}else{
+				if(keyCode < 48 || keyCode > 57){
+					event.returnValue = false;
+				}
+			}
+		}
 		
 		
+		//给按钮btn btn-primary绑定单击保存事件
+		
+		
+		savebut = function(){
+			//获取参数
+			var owner = $("#create-marketActivityOwner").val();
+			var name = $.trim($("#create-marketActivityName").val());
+			var startTime = $("#create-startTime").val();
+			var endTime = $("#create-endTime").val();
+			var cost = $.trim($("#create-cost").val());
+			var description = $.trim($("#create-describe").val());
+			//确保数据合法
+			//所有者owner和名称name不能为""
+			if(owner == "" || name == ""){
+				alert("拥有者和活动名称都不能为空！");
+				return;
+			}
+			var regExp = /^(([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[13579][26])00))-02-29)$/g;
+			var startOk = regExp.test(startTime);
+			var regExp2 = /^(([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[13579][26])00))-02-29)$/g;			
+			var endOk = regExp2.test(endTime);
+			if(startTime != "" && !startOk){
+				alert("开始时间格式不对！");
+				return;
+			}
+			if(endTime != "" && !endOk){
+				alert("结束时间格式不对！");
+				return;
+			}
+			if(startTime != "" && endTime != "" && startTime > endTime){
+				alert("开始时间不能比结束时间大");
+				return;
+			}
+			//提交请求
+			$.ajax({
+				url:'${pageContext.request.contextPath}/workbench/activity/create/save',
+				data:{
+					activityOwner:owner,
+					activityName:name,
+					activityStartDate:startTime,
+					activityEndDate:endTime,
+					activityCost:cost,
+					activityDescription:description
+				},
+				type:'post',
+				dataType:'json',
+				success:function (data){
+					if(data["code"] == "1"){
+						//活动添加成功后，关闭当前的模态窗口，刷新当前页面的列表
+						//删除表单中的数据，触发关闭按钮
+						document.getElementById("createActivityForm").reset();
+						$("#closebut").click();
+						//后端把添加后的Activity对象放在data的otherDate中
+						
+					}else{
+						//显示错误提示信息
+						alert(data["message"]);
+					}
+				}
+			});
+		}
 		
 	});
 	
@@ -35,15 +114,15 @@
 				</div>
 				<div class="modal-body">
 				
-					<form class="form-horizontal" role="form">
+					<form class="form-horizontal" id="createActivityForm" role="form">
 					
 						<div class="form-group">
 							<label for="create-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="create-marketActivityOwner">
-								  <option>zhangsan</option>
-								  <option>lisi</option>
-								  <option>wangwu</option>
+								  <c:forEach items="${requestScope.users}" var="user">
+								  	<option value="${user.userId}">${user.divName}</option>
+								  </c:forEach>
 								</select>
 							</div>
                             <label for="create-marketActivityName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
@@ -66,7 +145,7 @@
 
                             <label for="create-cost" class="col-sm-2 control-label">成本</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="create-cost">
+                                <input type="text" class="form-control" id="create-cost" onkeydown="checkInput()">
                             </div>
                         </div>
 						<div class="form-group">
@@ -80,8 +159,8 @@
 					
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+					<button type="button" class="btn btn-default" id="closebut" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" onclick="savebut()">保存</button>
 				</div>
 			</div>
 		</div>
@@ -105,9 +184,9 @@
 							<label for="edit-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="edit-marketActivityOwner">
-								  <option>zhangsan</option>
-								  <option>lisi</option>
-								  <option>wangwu</option>
+								  <c:forEach items="${requestScope.users}" var="user">
+								  	<option value="${user.userId}">${user.divName}</option>
+								  </c:forEach>
 								</select>
 							</div>
                             <label for="edit-marketActivityName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
