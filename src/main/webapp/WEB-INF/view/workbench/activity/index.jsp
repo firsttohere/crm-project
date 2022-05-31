@@ -14,7 +14,69 @@
 
 <script type="text/javascript">
 
+	//定义一个函数，向后端发送第i页的请求,并且处理数据，一页默认显示10条记录
+	requestIpage = function(i){
+	
+		var name = $("#query-name").val();
+		var owner = $("#query-owner").val();
+		var startDate = $("#query-startDate").val();
+		var endDate = $("#query-endDate").val();
+		
+		$.ajax({
+			url:'${pageContext.request.contextPath}/workbench/activity/query',
+			data:{
+				pageNo:i,
+				pageSize:10,
+				name:name,
+				owner:owner,
+				startDate:startDate,
+				endDate:endDate
+			},
+			type:'post',
+			dataType:'json',
+			success:function (result){
+				//后端返回一个list，和总记录条数
+				//获取数据
+				var count = result["count"];
+				var activities = result["activities"];
+				//展示总页数
+				$("#totalCounts").html(count);
+				//展示所有记录
+				var s;
+				for(var i = 0;i < activities.length;i++){
+					var id = activities[i].activityId;
+					var name = activities[i].activityName;
+					var owner = activities[i].activityOwner;
+					var startTime = activities[i].activityStartDate;
+					var endTime = activities[i].activityEndDate;
+					s += "<tbody id=\"myshowbody\"><tr class=\"active\"><td><input type=\"checkbox\" value=\""+id+"\"/></td><td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='detail.html';\">"+name+"</a></td><td>"+owner+"</td><td>"+startTime+"</td><td>"+endTime+"</td></tr></tbody>"
+					
+				}
+				$("#myshowbody").html(s);
+				
+			}
+			
+		});
+	}	
+
 	$(function(){
+		
+		
+		
+		//页面加载完毕后，向后端发送ajax请求，希望返回活动表中的记录条数，以及第1页的数据
+		requestIpage(1);
+		
+		//绑定日历插件
+		$(".mydate").datetimepicker({
+			language:'zh-CN',//语言
+			format:'yyyy-mm-dd',
+			minView:'month',
+			initialDate:new Date(),
+			autoclose:true,
+			todayBtn:true,
+			clearBtn:true
+		});
+		
 		//cost输入框只允许，输入数字
 		checkInput = function(){
 			var keyCode = event.keyCode;
@@ -134,11 +196,11 @@
 						<div class="form-group">
 							<label for="create-startTime" class="col-sm-2 control-label">开始日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-startTime">
+								<input type="text" class="form-control mydate" id="create-startTime" readonly>
 							</div>
 							<label for="create-endTime" class="col-sm-2 control-label">结束日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-endTime">
+								<input type="text" class="form-control mydate" id="create-endTime" readonly>
 							</div>
 						</div>
                         <div class="form-group">
@@ -286,14 +348,14 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">名称</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="query-name">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">所有者</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="query-owner">
 				    </div>
 				  </div>
 
@@ -301,13 +363,13 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">开始日期</div>
-					  <input class="form-control" type="text" id="startTime" />
+					  <input class="form-control" type="text" id="query-startDate" />
 				    </div>
 				  </div>
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">结束日期</div>
-					  <input class="form-control" type="text" id="endTime">
+					  <input class="form-control" type="text" id="query-endDate">
 				    </div>
 				  </div>
 				  
@@ -338,7 +400,7 @@
 							<td>结束日期</td>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="myshowbody">
 						<tr class="active">
 							<td><input type="checkbox" /></td>
 							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">发传单</a></td>
@@ -346,20 +408,13 @@
 							<td>2020-10-10</td>
 							<td>2020-10-20</td>
 						</tr>
-                        <tr class="active">
-                            <td><input type="checkbox" /></td>
-                            <td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">发传单</a></td>
-                            <td>zhangsan</td>
-                            <td>2020-10-10</td>
-                            <td>2020-10-20</td>
-                        </tr>
 					</tbody>
 				</table>
 			</div>
 			
 			<div style="height: 50px; position: relative;top: 30px;">
 				<div>
-					<button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
+					<button type="button" class="btn btn-default" style="cursor: default;">共<b id="totalCounts">50</b>条记录</button>
 				</div>
 				<div class="btn-group" style="position: relative;top: -34px; left: 110px;">
 					<button type="button" class="btn btn-default" style="cursor: default;">显示</button>
