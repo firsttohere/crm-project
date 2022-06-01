@@ -18,4 +18,6 @@ public interface ActivityService {
 	Activity queryById(String id);
 	//按照选择的字段更新
 	int updatePart(Activity activity);
+	//查询所有活动
+	List<Activity> queryAll();
 }

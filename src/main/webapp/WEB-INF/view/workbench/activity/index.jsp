@@ -102,6 +102,7 @@
 	
 
 	$(function(){
+		
 		//页面加载完毕后，向后端发送ajax请求，希望返回活动表中的记录条数，以及第1页的数据
 		requestIpage(1,10);
 		
@@ -342,6 +343,7 @@
 			//后台查询所有的activity
 			//创建一个excel文件，把市场活动写到excel文件
 			//把excel文件通过网络传输，到浏览器
+			window.location.href = "${pageContext.request.contextPath}/workbench/activity/filedownload";
 		});
 	});
 	

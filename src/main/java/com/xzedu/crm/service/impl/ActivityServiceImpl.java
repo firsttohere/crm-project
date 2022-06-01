@@ -63,4 +63,9 @@ public class ActivityServiceImpl implements ActivityService {
 		return activityMapper.updateByPrimaryKeySelective(activity);
 	}
 
+	@Override
+	public List<Activity> queryAll() {
+		return activityMapper.queryAll();
+	}
+
 }

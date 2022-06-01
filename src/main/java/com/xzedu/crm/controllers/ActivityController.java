@@ -1,11 +1,24 @@
 package com.xzedu.crm.controllers;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -120,5 +133,66 @@ public class ActivityController {
 			message.setMessage("系统繁忙");
 		}
 		return message;
+	}
+	
+	@RequestMapping("/filedownload")
+	public void fileDownload(HttpServletResponse response) throws IOException {
+		//查询所有的活动
+		List<Activity> activities = activityService.queryAll();
+		//创建
+		String filePath = this.getClass().getClassLoader().getResource("excels/activities.xls").getPath();
+		File file = new File(filePath);
+		if (!file.exists()) {
+			file.createNewFile();
+		}
+		HSSFWorkbook workbook = new HSSFWorkbook();//代表一个excel文件
+		HSSFRow row;
+		HSSFCell cell;
+		HSSFSheet sheet = workbook.createSheet();//创建一页
+		//创建表头
+		row = sheet.createRow(0);
+		cell = row.createCell(0);
+		cell.setCellValue("名称");
+		cell = row.createCell(1);
+		cell.setCellValue("负责人");
+		cell = row.createCell(2);
+		cell.setCellValue("开始日期");
+		cell = row.createCell(3);
+		cell.setCellValue("结束日期");
+		cell = row.createCell(4);
+		cell.setCellValue("预算花费");
+		for (int i = 1; i <= activities.size(); i++) {
+			Activity activity = activities.get(i - 1);
+			row = sheet.createRow(i);//创建一行
+			cell = row.createCell(0);
+			cell.setCellValue(activity.getActivityName());
+			cell = row.createCell(1);
+			cell.setCellValue(activity.getActivityOwner());
+			cell = row.createCell(2);
+			cell.setCellValue(activity.getActivityStartDate());
+			cell = row.createCell(3);
+			cell.setCellValue(activity.getActivityEndDate());
+			cell = row.createCell(4);
+			cell.setCellValue(activity.getActivityCost());
+		}
+		OutputStream o;
+		workbook.write(o = new FileOutputStream(file));
+		o.close();
+		workbook.close();
+		
+		//把文件读进来
+		response.setContentType("application/octet-stream;charset=UTF-8");
+		ServletOutputStream outputStream = response.getOutputStream();
+		response.addHeader("Content-Disposition", "attachment;filename=activityList.xls");
+		FileInputStream fis = new FileInputStream(file);
+		byte[] buf = new byte[1024];
+		int readRow = -1;
+		while((readRow = fis.read(buf)) != -1) {
+			//把buf中的数据输出到write中
+			outputStream.write(buf, 0, readRow);
+		}
+		fis.close();
+		outputStream.flush();
+		
 	}
 }
