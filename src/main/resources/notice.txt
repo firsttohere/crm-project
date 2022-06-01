@@ -87,4 +87,16 @@ CRM项目数据库表的设计
 			3.把开发包引入到jsp文件中
 			4.创建容器，<input type="text"> <div>两种容器是最多的
 			5.当容器加载完后，对容器调用工具函数
+			
+		使用java生成excel文件
+			io写数据，只能写无格式文件，没有行、列、颜色等等，使用插件
+				iText(收费...)、apache-poi(apache开源)
+				关于办公文档插件使用的基本思想：把办公文档的所有元素封装成普通的java类，
+										程序员通过操作这些来达到操作办公文档的目的
+				文件--------HSSFWorkbook
+				页---------HSSFSheet
+				行---------HSSFRow
+				列---------HSSFCell
+				样式--------HSSFCellStyle
+		文件下载
  			

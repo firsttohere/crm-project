@@ -8,7 +8,6 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -79,8 +78,47 @@ public class ActivityController {
 		int count = activityService.queryCount();
 		result.setCount(count);
 		//查询对应页的数据
-		List<Activity> page = activityService.queryByPage(map);
+		List<Activity> page = null;
+		try {
+			page = activityService.queryByPage(map);
+		} catch (Exception e) {
+		}
+		
 		result.setActivities(page);
 		return result;
+	}
+	
+	@RequestMapping("/delete")
+	@ResponseBody
+	public Object delete(@RequestParam String[] ids) {
+		int effectRows = activityService.batchDelete(ids);
+		Message message = new Message();
+		if (effectRows == ids.length) {
+			message.setCode("1");
+		}else {
+			message.setCode("0");
+			message.setMessage("删除失败或者部分失败");
+		}
+		return message;
+	}
+	
+	@RequestMapping(value = "/queryById",method = {RequestMethod.GET})
+	@ResponseBody
+	public Object queryById(String id) {
+		return activityService.queryById(id);
+	}
+	
+	@RequestMapping("/update")
+	@ResponseBody
+	public Object update(Activity activity) {
+		int effectRows = activityService.updatePart(activity);
+		Message message = new Message();
+		if(effectRows == 1) {
+			message.setCode("1");
+		}else {
+			message.setCode("0");
+			message.setMessage("系统繁忙");
+		}
+		return message;
 	}
 }

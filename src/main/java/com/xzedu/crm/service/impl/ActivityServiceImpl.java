@@ -48,4 +48,19 @@ public class ActivityServiceImpl implements ActivityService {
 		return activityMapper.queryByPageNoAndPageSize(map);
 	}
 
+	@Override
+	public int batchDelete(String[] ids) {
+		return activityMapper.batchDelete(ids);
+	}
+
+	@Override
+	public Activity queryById(String id) {
+		return activityMapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public int updatePart(Activity activity) {
+		return activityMapper.updateByPrimaryKeySelective(activity);
+	}
+
 }

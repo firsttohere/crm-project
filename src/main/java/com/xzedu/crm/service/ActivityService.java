@@ -12,4 +12,10 @@ public interface ActivityService {
 	int queryCount();
 	//分页查询
 	List<Activity> queryByPage(Map<String, Object> map);
+	//批量删除
+	int batchDelete(String[] ids);
+	//根据id查询一个activity
+	Activity queryById(String id);
+	//按照选择的字段更新
+	int updatePart(Activity activity);
 }
