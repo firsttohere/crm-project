@@ -245,6 +245,76 @@
 			}
 		});
 		
+		//给导出按钮绑定事件
+		$("#activityFile").prop("accept","application/vnd.ms-excel");//只接受.xls文件
+		$("#importActivityBtn").click(function(){
+			
+			//获取<input type="file" id="activityFile">的dom对象
+			var f = document.getElementById("activityFile");
+			//创建一个formData对象
+			var formData = new FormData();
+			//判断文件是否符合格式要求
+			if(!/\w+.xls$/.test(f.files[0].name)){
+				alert("格式不正确");
+				return;
+			}
+			//把键值对封装到formData中
+			formData.append("myFile",f.files[0]);
+			//向后台发送请求
+			$.ajax({
+				url:'${pageContext.request.contextPath}/workbench/activity/batchInsert',
+				type:'post',
+				data:formData,
+				cache:false,
+				contentType:false,
+				processData:false,
+				success:function(result){
+					//后端发送结果告诉前端是否导入成功
+					if(result["code"] == "0"){
+						alert(result["message"]);
+						//关闭模态窗口
+						$("#importActivityModal").modal("hide");
+						return;
+					}
+					//成功就刷新页面
+					requestIpage($("#showPageDiv").bs_pagination('getOption','currentPage'),$("#showPageDiv").bs_pagination('getOption','rowsPerPage'));
+					alert(result["message"]);
+					//关闭模态窗口
+					$("#importActivityModal").modal("hide");
+				}
+			});
+			
+		});
+		
+		//给选择导出绑定单击事件
+		$("#exportActivityXzBtn").click(function(){
+			//看看当前页，哪些被选中了
+			var arr = [];
+			$("#myshowbody input[type='checkbox']:checked").each(function(i){
+				arr[i] = $(this).val();
+			});
+			//arr就是要导出的所有活动的id
+			if(arr.length == 0){
+				alert("请选择要导出的文件，至少选择一项");
+				return;
+			}
+			//发送同步请求
+			var temp = document.createElement("form");
+			temp.action = "${pageContext.request.contextPath}/workbench/activity/downloadPart";
+			temp.method = "post";
+			temp.style.display = "none";
+			for(var i = 0;i < arr.length;i++){
+				var checkb = document.createElement("input");
+				checkb.type = "checkbox";
+				checkb.name = "activityId";
+				checkb.value = arr[i];
+				checkb.checked = "checked";
+				temp.appendChild(checkb);
+			}
+			document.body.appendChild(temp);
+			temp.submit();
+		});
+		
 		//绑定日历插件
 		$(".mydate").datetimepicker({
 			language:'zh-CN',//语言

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzedu.crm.dao.ActivityMapper" >
+  <resultMap id="BaseResultMap" type="com.xzedu.crm.pojo.Activity" >
+    <id column="activity_id" property="activityId" jdbcType="CHAR" />
+    <result column="activity_owner" property="activityOwner" jdbcType="CHAR" />
+    <result column="activity_name" property="activityName" jdbcType="VARCHAR" />
+    <result column="activity_start_date" property="activityStartDate" jdbcType="CHAR" />
+    <result column="activity_end_date" property="activityEndDate" jdbcType="CHAR" />
+    <result column="activity_cost" property="activityCost" jdbcType="VARCHAR" />
+    <result column="activity_description" property="activityDescription" jdbcType="VARCHAR" />
+    <result column="activity_create_time" property="activityCreateTime" jdbcType="CHAR" />
+    <result column="activity_create_by" property="activityCreateBy" jdbcType="VARCHAR" />
+    <result column="activity_edit_time" property="activityEditTime" jdbcType="CHAR" />
+    <result column="activity_edit_by" property="activityEditBy" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    activity_id, activity_owner, activity_name, activity_start_date, activity_end_date, 
+    activity_cost, activity_description, activity_create_time, activity_create_by, activity_edit_time, 
+    activity_edit_by
+  </sql>
+  
+  <insert id="batchInsert">
+  	insert into tbl_activity
+  	(<include refid="Base_Column_List"/>)
+  	values
+  	<foreach collection="list" item="a" separator=",">
+  		(#{a.activityId}, #{a.activityOwner}, #{a.activityName}, 
+      #{a.activityStartDate}, #{a.activityEndDate}, #{a.activityCost}, 
+      #{a.activityDescription}, #{a.activityCreateTime}, #{a.activityCreateBy}, 
+      #{a.activityEditTime}, #{a.activityEditBy})
+  	</foreach>
+  </insert>
+  
+  <select id="queryAll" resultMap="BaseResultMap">
+  	select 
+  	activity_id, t2.div_name as activity_owner, activity_name, activity_start_date, activity_end_date, 
+    activity_cost, activity_description, activity_create_time, activity_create_by, activity_edit_time, 
+    activity_edit_by
+  	from tbl_activity t1 join tbl_user t2
+  	on t1.activity_owner = t2.user_id
+  </select>
+  
+  <select id="batchQuery" resultMap="BaseResultMap">
+  	select 
+  	activity_id, t2.div_name as activity_owner, activity_name, activity_start_date, activity_end_date, 
+    activity_cost, activity_description, activity_create_time, activity_create_by, activity_edit_time, 
+    activity_edit_by
+  	from tbl_activity t1 join tbl_user t2
+  	on t1.activity_owner = t2.user_id
+  	<where>
+  		<if test="array != null and array.length > 0">
+  			activity_id in
+  			<foreach collection="array" item="id" open="(" separator="," close=")">
+  				#{id}
+  			</foreach>
+  		</if>
+  	</where>
+  </select>
+  
+  <delete id="batchDelete">
+  	delete
+  	from tbl_activity
+  	<where>
+  		<if test="array == null or array.length == 0">
+  			false
+  		</if>
+  		<if test="array != null and array.length > 0">
+	  		activity_id in 
+	  		<foreach collection="array" item="id" open="(" separator="," close=")">
+	  			#{id}
+	  		</foreach>
+	  	</if>
+  	</where>
+  	
+  </delete>
+  
+  <select id="queryByPageNoAndPageSize" resultMap="BaseResultMap">
+  	select
+    activity_id, t2.div_name as activity_owner, activity_name, activity_start_date, activity_end_date, 
+    activity_cost, activity_description, activity_create_time, activity_create_by, activity_edit_time, 
+    activity_edit_by
+  	from tbl_activity t1 join tbl_user t2
+  	on t1.activity_owner = t2.user_id
+  	<where>
+  		<if test="name != null and name != ''">
+  			t1.activity_name like '%' #{name} '%'
+  		</if>
+  		<if test="owner != null and owner != ''">
+  			and t2.div_name like '%' #{owner} '%'
+  		</if>
+  		<if test="startDate != null and startDate != ''">
+  			and t1.activity_start_date &gt; #{startDate}
+  		</if>
+  		<if test="endDate != null and endDate != ''">
+  			and t1.activity_end_date &lt; #{endDate}
+  		</if>
+  	</where>
+  	order by t1.activity_create_time desc
+  	limit #{pageNo},#{pageSize}
+  </select>
+  
+  <select id="queryCount" resultType="java.lang.Integer">
+  	select count(*) from tbl_activity
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_activity
+    where activity_id = #{activityId,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tbl_activity
+    where activity_id = #{activityId,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xzedu.crm.pojo.Activity" >
+    insert into tbl_activity (activity_id, activity_owner, activity_name, 
+      activity_start_date, activity_end_date, activity_cost, 
+      activity_description, activity_create_time, activity_create_by, 
+      activity_edit_time, activity_edit_by)
+    values (#{activityId,jdbcType=CHAR}, #{activityOwner,jdbcType=CHAR}, #{activityName,jdbcType=VARCHAR}, 
+      #{activityStartDate,jdbcType=CHAR}, #{activityEndDate,jdbcType=CHAR}, #{activityCost,jdbcType=VARCHAR}, 
+      #{activityDescription,jdbcType=VARCHAR}, #{activityCreateTime,jdbcType=CHAR}, #{activityCreateBy,jdbcType=VARCHAR}, 
+      #{activityEditTime,jdbcType=CHAR}, #{activityEditBy,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xzedu.crm.pojo.Activity" >
+    insert into tbl_activity
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="activityId != null" >
+        activity_id,
+      </if>
+      <if test="activityOwner != null" >
+        activity_owner,
+      </if>
+      <if test="activityName != null" >
+        activity_name,
+      </if>
+      <if test="activityStartDate != null" >
+        activity_start_date,
+      </if>
+      <if test="activityEndDate != null" >
+        activity_end_date,
+      </if>
+      <if test="activityCost != null" >
+        activity_cost,
+      </if>
+      <if test="activityDescription != null" >
+        activity_description,
+      </if>
+      <if test="activityCreateTime != null" >
+        activity_create_time,
+      </if>
+      <if test="activityCreateBy != null" >
+        activity_create_by,
+      </if>
+      <if test="activityEditTime != null" >
+        activity_edit_time,
+      </if>
+      <if test="activityEditBy != null" >
+        activity_edit_by,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="activityId != null" >
+        #{activityId,jdbcType=CHAR},
+      </if>
+      <if test="activityOwner != null" >
+        #{activityOwner,jdbcType=CHAR},
+      </if>
+      <if test="activityName != null" >
+        #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="activityStartDate != null" >
+        #{activityStartDate,jdbcType=CHAR},
+      </if>
+      <if test="activityEndDate != null" >
+        #{activityEndDate,jdbcType=CHAR},
+      </if>
+      <if test="activityCost != null" >
+        #{activityCost,jdbcType=VARCHAR},
+      </if>
+      <if test="activityDescription != null" >
+        #{activityDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="activityCreateTime != null" >
+        #{activityCreateTime,jdbcType=CHAR},
+      </if>
+      <if test="activityCreateBy != null" >
+        #{activityCreateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="activityEditTime != null" >
+        #{activityEditTime,jdbcType=CHAR},
+      </if>
+      <if test="activityEditBy != null" >
+        #{activityEditBy,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xzedu.crm.pojo.Activity" >
+    update tbl_activity
+    <set >
+      <if test="activityOwner != null and activityOwner != ''" >
+        activity_owner = #{activityOwner,jdbcType=CHAR},
+      </if>
+      <if test="activityName != null and activityName != ''" >
+        activity_name = #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="activityStartDate != null and activityStartDate != ''" >
+        activity_start_date = #{activityStartDate,jdbcType=CHAR},
+      </if>
+      <if test="activityEndDate != null and activityEndDate != ''" >
+        activity_end_date = #{activityEndDate,jdbcType=CHAR},
+      </if>
+      <if test="activityCost != null and activityCost != ''" >
+        activity_cost = #{activityCost,jdbcType=VARCHAR},
+      </if>
+      <if test="activityDescription != null and activityDescription != ''" >
+        activity_description = #{activityDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="activityCreateTime != null and activityCreateTime != ''" >
+        activity_create_time = #{activityCreateTime,jdbcType=CHAR},
+      </if>
+      <if test="activityCreateBy != null and activityCreateBy != ''" >
+        activity_create_by = #{activityCreateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="activityEditTime != null and activityEditTime != ''" >
+        activity_edit_time = #{activityEditTime,jdbcType=CHAR},
+      </if>
+      <if test="activityEditBy != null and activityEditBy != ''" >
+        activity_edit_by = #{activityEditBy,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where activity_id = #{activityId,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xzedu.crm.pojo.Activity" >
+    update tbl_activity
+    set activity_owner = #{activityOwner,jdbcType=CHAR},
+      activity_name = #{activityName,jdbcType=VARCHAR},
+      activity_start_date = #{activityStartDate,jdbcType=CHAR},
+      activity_end_date = #{activityEndDate,jdbcType=CHAR},
+      activity_cost = #{activityCost,jdbcType=VARCHAR},
+      activity_description = #{activityDescription,jdbcType=VARCHAR},
+      activity_create_time = #{activityCreateTime,jdbcType=CHAR},
+      activity_create_by = #{activityCreateBy,jdbcType=VARCHAR},
+      activity_edit_time = #{activityEditTime,jdbcType=CHAR},
+      activity_edit_by = #{activityEditBy,jdbcType=VARCHAR}
+    where activity_id = #{activityId,jdbcType=CHAR}
+  </update>
+</mapper>

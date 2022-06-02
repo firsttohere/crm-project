@@ -8,4 +8,9 @@ import com.xzedu.crm.pojo.User;
 public interface UserService {
 	User queryUserByLoginActAndPwd(Map<String, Object> map);
 	List<User> queryAllUser();
+	/**
+	 * key是divName value是userId
+	 * @return
+	 */
+	Map<String, String> getAllAllowUser();
 }

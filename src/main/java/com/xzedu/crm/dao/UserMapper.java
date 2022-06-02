@@ -21,4 +21,6 @@ public interface UserMapper {
     User selectUserByLoginActAndPwd(Map<String, Object> map);
     
     List<User> selectAllUser();
+    
+    List<User> selectAllNameAndId();
 }

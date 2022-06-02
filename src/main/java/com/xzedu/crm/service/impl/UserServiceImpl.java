@@ -3,6 +3,7 @@ package com.xzedu.crm.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,14 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<User> queryAllUser() {
 		return userMapper.selectAllUser();
+	}
+
+	@Override
+	public Map<String, String> getAllAllowUser() {
+		List<User> list = userMapper.selectAllNameAndId();
+		HashedMap<String,String> map = new HashedMap<String, String>();
+		list.forEach((u) -> map.put(u.getDivName(), u.getUserId()));
+		return map;
 	}
 
 }

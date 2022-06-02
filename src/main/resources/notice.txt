@@ -99,4 +99,11 @@ CRM项目数据库表的设计
 				列---------HSSFCell
 				样式--------HSSFCellStyle
 		文件下载
+		文件上传
+			文件上传表单标签必须使用 <input type="file">
+			请求方式必须是 post
+			文件上传的表单编码格式只能用multipart/form-data
+				如何设置编码通过<input enctype="multipart/form-data">
+					
+		
  			

@@ -20,4 +20,8 @@ public interface ActivityService {
 	int updatePart(Activity activity);
 	//查询所有活动
 	List<Activity> queryAll();
+	//批量查询
+	List<Activity> batchQuery(String[] ids);
+	//批量添加
+	int batchInsert(List<Activity> list);
 }

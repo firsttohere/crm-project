@@ -20,12 +20,18 @@
     user_id, u_login_act, u_login_pwd, div_name, u_email, u_expire_time, u_lock_state, 
     u_deptno, u_allow_ips, u_createTime, u_create_by, u_edit_time, u_edit_by
   </sql>
+  
+  <select id="selectAllNameAndId" resultMap="BaseResultMap">
+  	select user_id,div_name
+  	from tbl_user
+  </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
     from tbl_user
     where user_id = #{userId,jdbcType=CHAR}
   </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from tbl_user
     where user_id = #{userId,jdbcType=CHAR}

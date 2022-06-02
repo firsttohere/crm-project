@@ -68,4 +68,14 @@ public class ActivityServiceImpl implements ActivityService {
 		return activityMapper.queryAll();
 	}
 
+	@Override
+	public List<Activity> batchQuery(String[] ids) {
+		return activityMapper.batchQuery(ids);
+	}
+
+	@Override
+	public int batchInsert(List<Activity> list) {
+		return activityMapper.batchInsert(list);
+	}
+
 }
