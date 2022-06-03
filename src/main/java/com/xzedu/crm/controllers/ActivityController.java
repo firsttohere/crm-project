@@ -1,8 +1,9 @@
 package com.xzedu.crm.controllers;
 
-import java.io.File;
-import java.io.FileInputStream;
+//import java.io.File;
+//import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -42,17 +43,31 @@ public class ActivityController {
 	@Autowired
 	private ActivityService activityService;
 	
+	@RequestMapping(value="/showDetail",params = {"id"})
+	public String activityDetail(String id,HttpServletRequest request) {
+		//根据id查找活动的所有字段
+		Activity activity = activityService.selectById(id);
+		//把activity放在request域中
+		request.setAttribute("selectedActivity", activity);
+		//跳转到备注controller，查询这个活动的备注信息
+		return "forward:/workbench/activityRemark/showRemarks";
+	}
+	
 	@RequestMapping("/batchInsert")
 	@ResponseBody
 	public Object batchInsert(MultipartFile myFile,HttpSession session) throws IllegalStateException, IOException {
 		Message message = new Message();
 		//把文件写在磁盘上
-		String filePath = "E:/resources/activity.xls";
-		File file = null;
-		myFile.transferTo(file = new File(filePath));
+//		String filePath = "E:/resources/activity.xls";
+//		File file = null;
+//		myFile.transferTo(file = new File(filePath));
 		
 		//把文件中的数据读到内存中，写到数据库
-		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(file));
+//		InputStream is = null;
+		InputStream is = myFile.getInputStream();
+//		HSSFWorkbook workbook = new HSSFWorkbook(is = new FileInputStream(file));
+		HSSFWorkbook workbook = new HSSFWorkbook(is);
+		is.close();
 		//获取第一页
 		HSSFSheet sheet = workbook.getSheetAt(0);
 		//查询所有的用户，仅返回user_divName 和 user_id
@@ -65,6 +80,7 @@ public class ActivityController {
 		try {
 			list = ParseExcelUtil.transferSheetToList(sheet, map);
 		} catch (Exception e) {
+			workbook.close();
 			//如果抛出异常就认为文件内容格式不正确
 			message.setCode("0");
 			message.setMessage(e.getMessage());
@@ -83,6 +99,7 @@ public class ActivityController {
 		//返回响应信息
 		message.setCode("1");
 		message.setMessage("成功添加" + effectRows + "条记录");
+		workbook.close();
 		return message;
 	}
 	
@@ -146,13 +163,20 @@ public class ActivityController {
 	@RequestMapping("/delete")
 	@ResponseBody
 	public Object delete(@RequestParam String[] ids) {
-		int effectRows = activityService.batchDelete(ids);
+		//进行优化，当删除市场活动的时候，需要删除与之对应的activityRemark
 		Message message = new Message();
-		if (effectRows == ids.length) {
-			message.setCode("1");
-		}else {
+		try {
+			int effectRows = activityService.batchDelete(ids);
+			
+			if (effectRows == ids.length) {
+				message.setCode("1");
+			}else {
+				message.setCode("0");
+				message.setMessage("除失败或者部分失败");
+			}
+		} catch (Exception e) {
 			message.setCode("0");
-			message.setMessage("删除失败或者部分失败");
+			message.setMessage("删除除失败");
 		}
 		return message;
 	}

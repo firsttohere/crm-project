@@ -47,6 +47,7 @@ public class ParseExcelUtil {
 	/**
 	 * allowOwners的key是tbl_user中的user_divName,值是其user_id
 	 */
+	//FIXME 待修改
 	public static List<Activity> transferSheetToList(HSSFSheet sheet,Map<String,String> allowOwners){
 		
 		String dateFormat = "([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8])))";

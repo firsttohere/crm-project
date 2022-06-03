@@ -24,4 +24,7 @@ public interface ActivityService {
 	List<Activity> batchQuery(String[] ids);
 	//批量添加
 	int batchInsert(List<Activity> list);
+	
+	//根据id查找，其中owner是真名
+	Activity selectById(String activityId);
 }

@@ -46,4 +46,8 @@ public class Test1 {
 		File file = new File("src/main/resources/a.txt");
 		file.createNewFile();
 	}
+	
+	public void m1() {
+		
+	}
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.xzedu.crm.dao.ActivityMapper;
+import com.xzedu.crm.dao.ActivityRemarkMapper;
 import com.xzedu.crm.pojo.Activity;
 import com.xzedu.crm.service.ActivityService;
 
@@ -16,6 +17,8 @@ public class ActivityServiceImpl implements ActivityService {
 	@Autowired
 	private ActivityMapper activityMapper;
 
+	@Autowired
+	private ActivityRemarkMapper activityRemarkMapper;
 	
 	@Override
 	public int createActivity(Activity activity) {
@@ -50,7 +53,13 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Override
 	public int batchDelete(String[] ids) {
-		return activityMapper.batchDelete(ids);
+		
+		//删除哪些activityRemark的acivityId在ids中的备注
+		activityRemarkMapper.deleteRelativeRemark(ids);
+		
+		int deleteActivityCount = activityMapper.batchDelete(ids);
+		
+		return deleteActivityCount;
 	}
 
 	@Override
@@ -76,6 +85,11 @@ public class ActivityServiceImpl implements ActivityService {
 	@Override
 	public int batchInsert(List<Activity> list) {
 		return activityMapper.batchInsert(list);
+	}
+
+	@Override
+	public Activity selectById(String activityId) {
+		return activityMapper.selectById(activityId);
 	}
 
 }

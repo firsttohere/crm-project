@@ -79,7 +79,7 @@
 				if(activities != null){
 					var s = "";
 					$.each(activities,function(index,obj){
-						s += "<tr class=\"active\"><td><input type=\"checkbox\" value=\""+obj.activityId+"\"/></td><td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='detail.html';\">"+obj.activityName+"</a></td><td>"+obj.activityOwner+"</td><td>"+obj.activityStartDate+"</td><td>"+obj.activityEndDate+"</td></tr>"
+						s += "<tr class=\"active\"><td><input type=\"checkbox\" value=\""+obj.activityId+"\"/></td><td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='${pageContext.request.contextPath}/workbench/activity/showDetail?id="+obj.activityId+"';\">"+obj.activityName+"</a></td><td>"+obj.activityOwner+"</td><td>"+obj.activityStartDate+"</td><td>"+obj.activityEndDate+"</td></tr>"
 					});
 					$("#myshowbody").html(s);
 				}else{
@@ -256,6 +256,10 @@
 			//判断文件是否符合格式要求
 			if(!/\w+.xls$/.test(f.files[0].name)){
 				alert("格式不正确");
+				return;
+			}
+			if(f.files[0].size > 5 * 1024 * 1024){
+				alert("文件大小不能超过5MB");
 				return;
 			}
 			//把键值对封装到formData中

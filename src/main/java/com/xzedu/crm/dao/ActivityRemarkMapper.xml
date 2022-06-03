@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzedu.crm.dao.ActivityRemarkMapper" >
+  <resultMap id="BaseResultMap" type="com.xzedu.crm.pojo.ActivityRemark" >
+    <id column="activity_remark_id" property="activityRemarkId" jdbcType="CHAR" />
+    <result column="activity_id" property="activityId" jdbcType="CHAR" />
+    <result column="ar_note_content" property="arNoteContent" jdbcType="VARCHAR" />
+    <result column="ar_create_time" property="arCreateTime" jdbcType="CHAR" />
+    <result column="ar_create_by" property="arCreateBy" jdbcType="VARCHAR" />
+    <result column="ar_edit_time" property="arEditTime" jdbcType="CHAR" />
+    <result column="ar_edit_by" property="arEditBy" jdbcType="VARCHAR" />
+    <result column="ar_edit_flag" property="arEditFlag" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    activity_remark_id, activity_id, ar_note_content, ar_create_time, ar_create_by, ar_edit_time, 
+    ar_edit_by, ar_edit_flag
+  </sql>
+  
+  <delete id="deleteRelativeRemark">
+  	delete
+  	from tbl_activity_remark
+  	where activity_id in
+  	<foreach collection="array" open="(" separator="," close=")" item="id">
+  		#{id}
+  	</foreach>
+  </delete>
+  
+  <select id="getAllByActivityId" resultMap="BaseResultMap">
+  	select
+  	t1.activity_remark_id, t1.activity_id, t1.ar_note_content, t1.ar_create_time,t2.div_name as ar_create_by, t1.ar_edit_time, 
+    t3.div_name as ar_edit_by, t1.ar_edit_flag
+    from tbl_activity_remark t1 join tbl_user t2
+    on t1.ar_create_by = t2.user_id
+    join tbl_user t3
+    on t1.ar_edit_by = t3.user_id
+    where t1.activity_id = #{activityId}
+  </select>
+  
+  <select id="getOneById" resultMap="BaseResultMap">
+  	select
+  	t1.activity_remark_id, t1.activity_id, t1.ar_note_content, t1.ar_create_time,t2.div_name as ar_create_by, t1.ar_edit_time, 
+    t3.div_name as ar_edit_by, t1.ar_edit_flag
+    from tbl_activity_remark t1 join tbl_user t2
+    on t1.ar_create_by = t2.user_id
+    join tbl_user t3
+    on t1.ar_edit_by = t3.user_id
+    where activity_remark_id = #{activityRemarkId,jdbcType=CHAR}
+  </select>  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_activity_remark
+    where activity_remark_id = #{activityRemarkId,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tbl_activity_remark
+    where activity_remark_id = #{activityRemarkId,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xzedu.crm.pojo.ActivityRemark" >
+    insert into tbl_activity_remark (activity_remark_id, activity_id, ar_note_content, 
+      ar_create_time, ar_create_by, ar_edit_time, 
+      ar_edit_by, ar_edit_flag)
+    values (#{activityRemarkId,jdbcType=CHAR}, #{activityId,jdbcType=CHAR}, #{arNoteContent,jdbcType=VARCHAR}, 
+      #{arCreateTime,jdbcType=CHAR}, #{arCreateBy,jdbcType=VARCHAR}, #{arEditTime,jdbcType=CHAR}, 
+      #{arEditBy,jdbcType=VARCHAR}, #{arEditFlag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xzedu.crm.pojo.ActivityRemark" >
+    insert into tbl_activity_remark
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="activityRemarkId != null" >
+        activity_remark_id,
+      </if>
+      <if test="activityId != null" >
+        activity_id,
+      </if>
+      <if test="arNoteContent != null" >
+        ar_note_content,
+      </if>
+      <if test="arCreateTime != null" >
+        ar_create_time,
+      </if>
+      <if test="arCreateBy != null" >
+        ar_create_by,
+      </if>
+      <if test="arEditTime != null" >
+        ar_edit_time,
+      </if>
+      <if test="arEditBy != null" >
+        ar_edit_by,
+      </if>
+      <if test="arEditFlag != null" >
+        ar_edit_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="activityRemarkId != null" >
+        #{activityRemarkId,jdbcType=CHAR},
+      </if>
+      <if test="activityId != null" >
+        #{activityId,jdbcType=CHAR},
+      </if>
+      <if test="arNoteContent != null" >
+        #{arNoteContent,jdbcType=VARCHAR},
+      </if>
+      <if test="arCreateTime != null" >
+        #{arCreateTime,jdbcType=CHAR},
+      </if>
+      <if test="arCreateBy != null" >
+        #{arCreateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="arEditTime != null" >
+        #{arEditTime,jdbcType=CHAR},
+      </if>
+      <if test="arEditBy != null" >
+        #{arEditBy,jdbcType=VARCHAR},
+      </if>
+      <if test="arEditFlag != null" >
+        #{arEditFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xzedu.crm.pojo.ActivityRemark" >
+    update tbl_activity_remark
+    <set >
+      <if test="activityId != null" >
+        activity_id = #{activityId,jdbcType=CHAR},
+      </if>
+      <if test="arNoteContent != null" >
+        ar_note_content = #{arNoteContent,jdbcType=VARCHAR},
+      </if>
+      <if test="arCreateTime != null" >
+        ar_create_time = #{arCreateTime,jdbcType=CHAR},
+      </if>
+      <if test="arCreateBy != null" >
+        ar_create_by = #{arCreateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="arEditTime != null" >
+        ar_edit_time = #{arEditTime,jdbcType=CHAR},
+      </if>
+      <if test="arEditBy != null" >
+        ar_edit_by = #{arEditBy,jdbcType=VARCHAR},
+      </if>
+      <if test="arEditFlag != null" >
+        ar_edit_flag = #{arEditFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where activity_remark_id = #{activityRemarkId,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xzedu.crm.pojo.ActivityRemark" >
+    update tbl_activity_remark
+    set activity_id = #{activityId,jdbcType=CHAR},
+      ar_note_content = #{arNoteContent,jdbcType=VARCHAR},
+      ar_create_time = #{arCreateTime,jdbcType=CHAR},
+      ar_create_by = #{arCreateBy,jdbcType=VARCHAR},
+      ar_edit_time = #{arEditTime,jdbcType=CHAR},
+      ar_edit_by = #{arEditBy,jdbcType=VARCHAR},
+      ar_edit_flag = #{arEditFlag,jdbcType=CHAR}
+    where activity_remark_id = #{activityRemarkId,jdbcType=CHAR}
+  </update>
+</mapper>

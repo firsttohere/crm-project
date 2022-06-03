@@ -13,8 +13,12 @@ public interface ActivityMapper {
 
     int insertSelective(Activity record);
 
+    //根据主键查找Activity，其中owner是id
     Activity selectByPrimaryKey(String activityId);
-
+    
+    //根据主键查找Activity，其中owner是真名
+    Activity selectById(String activityId);
+    
     int updateByPrimaryKeySelective(Activity record);
 
     int updateByPrimaryKey(Activity record);
