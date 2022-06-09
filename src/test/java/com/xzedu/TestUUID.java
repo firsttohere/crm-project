@@ -14,4 +14,10 @@ public class TestUUID {
 		System.out.println(string.length());
 		
 	}
+	@Test
+	public void t2(){
+		//这是在github上写的代码，看看会不会·同步到pull的本地
+		System.out.println("hello github!");
+	}
+
 }
